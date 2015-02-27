@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
     s.name              = 'starx'
-    s.version           = '0.1.0'
+    s.version           = '0.1.1'
     s.summary           = 'Simple, terminal-based game written in ruby'
     s.author            = 'Justyna Rachowicz'
     s.email             = 'justynarachowicz@gmail.com'
