@@ -4,7 +4,7 @@ require 'io/wait'
 WIDTH = %x{tput cols}.strip.to_i
 HEIGHT = %x{tput lines}.strip.to_i - 3
 
-class Game
+class Starx
 	def initialize
 		system 'tput civis'
 		@cells = {}
@@ -243,7 +243,7 @@ class Game
 		c = read_char_menu
 		case c
 		when 'a'
-			Game.new.play
+			Starx.new.play
 		when 'q'
 			system 'tput cnorm'
 			system 'clear'
@@ -287,5 +287,5 @@ class Game
 	# TODO: score count in hidden file and displayed on screen
 end
 
-g = Game.new
+g = Starx.new
 g.play
