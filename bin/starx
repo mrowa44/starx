@@ -4,7 +4,7 @@ require 'io/wait'
 WIDTH = %x{tput cols}.strip.to_i
 HEIGHT = %x{tput lines}.strip.to_i - 3
 
-class Starx
+class Game
 	def initialize
 		system 'tput civis'
 		@cells = {}
@@ -243,7 +243,7 @@ class Starx
 		c = read_char_menu
 		case c
 		when 'a'
-			Starx.new.play
+			Game.new.play
 		when 'q'
 			system 'tput cnorm'
 			system 'clear'
@@ -256,19 +256,20 @@ class Starx
 	def try_again_screen
 		(HEIGHT / 2).times{ WIDTH.times { print '*' } }
 		
-		num = WIDTH / 2 - 12
-		num.times{ print '*' }
-		print "  \e[31m  You died. Haha!  \e[0m    "
-		(num * 2).times{ print '*' }
-		print " \e[32m Your score: #{@score}\e[0m"
-		print '         '
-		(num * 2).times{ print '*' }
-		print " To try again hit 'a'   "
-		(num * 2).times{ print '*' }
-		print " To quit hit  'q'       "
-		(num - 1).times{ print '*' }
+		num = WIDTH / 2 
+                (WIDTH / 2 - 10).times{ print ' '}
+		print "\e[31m You died. Haha!\e[0m\n"
+                puts ''
+                (WIDTH / 2 - 10).times{ print ' '}
+		print "\e[32m Your score: #{@score}\e[0m\n"
+                puts ''
+                puts ''
+                (WIDTH / 2 - 10).times{ print ' '}
+		print "To try again hit 'a'\n"
+                (WIDTH / 2 - 10).times{ print ' '}
+		print "To quit hit  'q'\n"
 
-		(HEIGHT / 2 - 2).times{ WIDTH.times { print '*' } }
+		(HEIGHT / 2 - 1).times{ WIDTH.times { print '*' } }
 		puts ''
 		keys_menu	
 
@@ -286,5 +287,5 @@ class Starx
 	# TODO: score count in hidden file and displayed on screen
 end
 
-g = Starx.new
+g = Game.new
 g.play
