@@ -209,7 +209,6 @@ class Starx
 		begin
 			state = `stty -g`
 			`stty raw -echo isig`
-			c = nil
 			if $stdin.ready?
 				c = $stdin.getc.chr
 				if c == "\e"
@@ -278,10 +277,16 @@ class Starx
 
 	def play
 		loop do
+                    begin
 			tick
 			sleep 0.04
 			system 'clear'
-		end
+                    rescue Interrupt
+                        system 'tput cnorm'
+                        system 'clear'
+                        Process.exit! true
+                    end
+                 end
 	end
 	#
 	# TODO: score count in hidden file and displayed on screen
