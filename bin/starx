@@ -38,13 +38,14 @@ class Starx
 			position_array = position.split('.')
 			y = position_array[0]
 			x = position_array[1]
-			if x != 0 && value == :full
-				print "*"
-			elsif x != 0 && value == :empty
-				print " "
-			elsif x != 0 && value == :player
-				print "\e[31m>\e[0m"
-			end
+                        case value
+                        when :full
+                            print '*'
+                        when :empty
+                            print " "
+                        when :player
+                            print "\e[31m>\e[0m"
+                        end
 		end
 		WIDTH.times {print '*'}
 
@@ -129,58 +130,41 @@ class Starx
 	end
 	
 	def move_up!
-		player_key = @cells.select {|_,v| v == :player}.keys[0].split('.')
-		player_x = player_key[1]
-		player_y = player_key[0].to_i
-
-		cell_x = player_x
-		cell_y = player_y - 1
-		if cell_y < 10
-			cell_y = "0#{cell_y}" 
-		else
-			cell_y.to_s
-		end
-		player_y = player_key[0]
-
-		player_new_key = "#{player_y}.#{player_x}"
-		cell_key = "#{cell_y}.#{cell_x}"
-
-		@cells.delete(player_new_key)
-		@cells.delete(cell_key)
-
-		@cells[player_new_key] = :empty
-		@cells[cell_key] = :player
+            switch_player_with(1,0)
 	end
 
 	def move_down!	
-		player_key = @cells.select {|_,v| v == :player}.keys[0].split('.')
-		player_x = player_key[1]
-		player_y = player_key[0].to_i
-
-		cell_x = player_x
-		cell_y = player_y + 1
-		if cell_y < 10
-			cell_y = "0#{cell_y}" 
-		else
-			cell_y.to_s
-		end
-		player_y = player_key[0]
-
-		player_new_key = "#{player_y}.#{player_x}"
-		cell_key = "#{cell_y}.#{cell_x}"
-
-		@cells.delete(player_new_key)
-		@cells.delete(cell_key)
-
-		@cells[player_new_key] = :empty
-		@cells[cell_key] = :player
+            switch_player_with(-1,0)
 	end
+
+        def switch_player_with(y,x)
+            player_x = find_player[1].to_i
+            player_y = find_player[0].to_i
+            cell_x = player_x - x
+            cell_y = player_y - y
+
+            player_x = "0#{player_x}" if player_x < 10
+            player_y = "0#{player_y}" if player_y < 10
+            cell_x = "0#{cell_x}" if cell_x < 10
+            cell_y = "0#{cell_y}" if cell_y < 10
+
+            cell_key = "#{cell_y}.#{cell_x}"
+            player_key = "#{player_y}.#{player_x}"
+
+            @cells.delete(cell_key)
+            @cells.delete(player_key)
+            @cells[player_key] = :empty
+            @cells[cell_key] = :player
+        end
+
+        def find_player
+            @cells.select {|_,v| v == :player}.keys[0].split('.')
+        end
 
 	def collision?
 		collision = false
-		player_position = @cells.select {|_,v| v == :player}.keys[0].split('.')
-		player_x = player_position[1].to_i
-		player_y = player_position[0]
+		player_x = find_player[1].to_i
+		player_y = find_player[0]
 		cell_in_front_x = player_x + 1
 		cell_in_front_x = "0#{cell_in_front_x}" if cell_in_front_x < 10
 		cell_in_front = "#{player_y}.#{cell_in_front_x}"
@@ -207,33 +191,30 @@ class Starx
 
 	def read_char
 		begin
-			state = `stty -g`
-			`stty raw -echo isig`
-			if $stdin.ready?
-				c = $stdin.getc.chr
-				if c == "\e"
-					extra_thread = Thread.new do
-						c += $stdin.getc.chr
-						c += $stdin.getc.chr
-					end
-					extra_thread.join(0.00001)
-					extra_thread.kill
-				end
-			end
-		ensure
-			system "stty #{state}"
-		end
-		c
-		# TODO: Hide non-blocking io
-	end
+                    system 'stty raw -echo'
+                    if $stdin.ready?
+                        c = $stdin.getc.chr
+                        if c == "\e"
+                            extra_thread = Thread.new do
+                                c += $stdin.getc.chr
+                                c += $stdin.getc.chr
+                            end
+                        extra_thread.join 0.00001
+                        extra_thread.kill
+                        end
+                    end
+                ensure
+                    system 'stty -raw echo'
+                end
+                c
+        end
 
 	def read_char_menu
 		begin
-			state = `stty -g`
-			`stty raw -echo isig`
-			c = $stdin.getc.chr if $stdin
+			system 'stty raw -echo'
+			c = $stdin.getc.chr
 		ensure
-			system "stty #{state}"
+			system 'stty -raw echo'
 		end
 		c
 	end
@@ -272,7 +253,6 @@ class Starx
 		puts ''
 		keys_menu	
 
-		# TODO: Add best scores
 	end
 
 	def play
@@ -288,8 +268,6 @@ class Starx
                     end
                  end
 	end
-	#
-	# TODO: score count in hidden file and displayed on screen
 end
 
 g = Starx.new
