@@ -137,6 +137,14 @@ class Starx
             switch_player_with(-1,0)
 	end
 
+        def move_forward!
+            switch_player_with(0,-1)
+        end
+        
+        def move_backward!
+            switch_player_with(0,1)
+        end
+
         def switch_player_with(y,x)
             player_x = find_player[1].to_i
             player_y = find_player[0].to_i
@@ -186,6 +194,10 @@ class Starx
 				move_up!
 			when "\e[B"
 				move_down!
+                        when "\e[C"
+                                move_forward!
+                        when "\e[D"
+                                move_backward!
 			end
 	end
 
