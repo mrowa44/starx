@@ -6,22 +6,22 @@ HEIGHT = `tput lines`.to_i - 3
 
 class Starx
 	def initialize
-		@cells = {}
-    (1..HEIGHT).each do |y|
-      (1..WIDTH).each do |x|
-          y = add_zero_if_needed(y)
-          x = add_zero_if_needed(x)
-          key = "#{y}.#{x}"
-          if key == "#{ HEIGHT / 2 }.05"
-            @cells[key] = :player
-          else
-            @cells[key] = :empty
-          end
-      end
-    end
-		@tickcount = 0
-		@score = 0
-		display
+	@cells = {}
+	(1..HEIGHT).each do |y|
+	    (1..WIDTH).each do |x|
+	      y = add_zero_if_needed(y)
+	      x = add_zero_if_needed(x)
+	      key = "#{y}.#{x}"
+	      if key == "#{ HEIGHT / 2 }.05"
+	        @cells[key] = :player
+	      else
+	        @cells[key] = :empty
+	      end
+	    end
+	  end
+	  @tickcount = 0
+	  @score = 0
+	  display
 	end
 
   def add_zero_if_needed(value)
@@ -33,10 +33,10 @@ class Starx
     end
   end
 
-	def display
+  def display
     sort_cells
     print_score
-		@cells.each do |_, value|
+    @cells.each do |_, value|
       case value
       when :full
       print '*'
@@ -45,14 +45,14 @@ class Starx
       when :player
       print "\e[31m>\e[0m"
       end
-		end
-    print_asterisks
-	end
+    end
+  print_asterisks
+  end
 
   def print_score
-		score_length = "SCORE: #{@score}  ".length
-		print "\e[32mSCORE:\e[0m #{@score}  "
-		(WIDTH - score_length).times {print '*'}
+    score_length = "SCORE: #{@score}  ".length
+    print "\e[32mSCORE:\e[0m #{@score}  "
+    (WIDTH - score_length).times {print '*'}
   end
 
   def print_asterisks
@@ -60,88 +60,87 @@ class Starx
   end
 
   def sort_cells
-		@cells = @cells.sort_by { |key,_| key.to_f }	
+    @cells = @cells.sort_by { |key,_| key.to_f }	
   end
 
-	def tick
-		@tickcount += 1
-		if @tickcount >= WIDTH && @tickcount % 20 == 0
-			@score += 1 
-		end
-		new_cells
-		keys
-		if collision?
-			try_again_screen
-		else
-			display
-		end
-	end
+  def tick
+    @tickcount += 1
+    if @tickcount >= WIDTH && @tickcount % 20 == 0
+      @score += 1 
+    end
+    new_cells
+    keys
+    if collision?
+      try_again_screen
+    else
+      display
+    end
+  end
 
-	def new_cells
-		new_cells = {}
-		@cells.each do |position, value|
-			position_array = position.split('.')
-			y = position_array[0].to_i
-			x = position_array[1].to_i - 1
-			x = add_zero_if_needed(x)
-			y = add_zero_if_needed(y)
-			unless x.to_i == 0
-				new_key = "#{y}.#{x}"
-				new_cells[new_key] = value
-			end
-		end
-
-		@cells = new_cells
+  def new_cells
+    new_cells = {}
+    @cells.each do |position, value|
+      position_array = position.split('.')
+      y = position_array[0].to_i
+      x = position_array[1].to_i - 1
+      x = add_zero_if_needed(x)
+      y = add_zero_if_needed(y)
+      unless x.to_i == 0
+        new_key = "#{y}.#{x}"
+        new_cells[new_key] = value
+      end
+    end
+    @cells = new_cells
     switch_player_with(0,1)
     new_column
 	end
 
   def new_column
-		if  @tickcount % 20 == 0 || @tickcount == 1
+    if  @tickcount % 20 == 0 || @tickcount == 1
       new_full_column
-		else
-			x = WIDTH
+    else
+      x = WIDTH
       (1..HEIGHT).each do |y|
         y = add_zero_if_needed(y)
-				key = "#{y}.#{x}"
-				@cells[key] = :empty
-			end
-		end
+        key = "#{y}.#{x}"
+        @cells[key] = :empty
+      end
+    end
   end
   
   def new_full_column
-			x = WIDTH
-			space = HEIGHT / 5
-			random = rand(HEIGHT - space)
-      (1..random).each do |y|
-				y = add_zero_if_needed(y)
-				key = "#{y}.#{x}"
-				@cells[key] = :full
-			end
-      (random..(random + space)).each do |y|
-				y = add_zero_if_needed(y)
-				key = "#{y}.#{x}"
-				@cells[key] = :empty
-			end
-      ((random + space)..HEIGHT).each do |y|
-        y = add_zero_if_needed(y)
-				key = "#{y}.#{x}"
-				@cells[key] = :full
-			end
+    x = WIDTH
+    space = HEIGHT / 5
+    random = rand(HEIGHT - space)
+    (1..random).each do |y|
+      y = add_zero_if_needed(y)
+      key = "#{y}.#{x}"
+      @cells[key] = :full
+    end
+    (random..(random + space)).each do |y|
+      y = add_zero_if_needed(y)
+      key = "#{y}.#{x}"
+      @cells[key] = :empty
+    end
+    ((random + space)..HEIGHT).each do |y|
+      y = add_zero_if_needed(y)
+      key = "#{y}.#{x}"
+      @cells[key] = :full
+    end
   end
-	
-	def move_up!
+  
+  def move_up!
     switch_player_with(-1,0)
-	end
+  end
 
-	def move_down!	
+  def move_down!
     switch_player_with(1,0)
-	end
-
+  end
+  
   def move_forward!
     switch_player_with(0,1)
   end
-        
+  
   def move_backward!
     switch_player_with(0,-1)
   end
@@ -170,47 +169,46 @@ class Starx
     @cells.select {|_,v| v == :player}.keys[0].split('.')
   end
 
-	def collision?
-		collision = false
-		player_x = find_player[1].to_i
-		player_y = find_player[0]
-		cell_in_front_x = add_zero_if_needed(player_x + 1)
-		cell_in_front = "#{player_y}.#{cell_in_front_x}"
-
-		value_of_cell_in_front = @cells.select {|k, v| k == cell_in_front}.values[0]
-		if value_of_cell_in_front == :full
-			collision = true
-		end
-		collision
+  def collision?
+    collision = false
+    player_x = find_player[1].to_i
+    player_y = find_player[0]
+    cell_in_front_x = add_zero_if_needed(player_x + 1)
+    cell_in_front = "#{player_y}.#{cell_in_front_x}"
+    value_of_cell_in_front = @cells.select {|k, v| k == cell_in_front}.values[0]
+    if value_of_cell_in_front == :full
+      collision = true
+    end
+    collision
 	end
-			
-	def keys
-		c = read_char
+	
+  def keys
+    c = read_char
     case c
     when 'q'
-      quit_nicely
+    quit_nicely
     when "\e[A"
-      move_up!
-		when "\e[B"
-			move_down!
+    move_up!
+    when "\e[B"
+    move_down!
     when "\e[C"
-      move_forward!
+    move_forward!
     when "\e[D"
-      move_backward!
+    move_backward!
     when "\u0003"
-      quit_nicely
+    quit_nicely
     end
-	end
+  end
 
   def quit_nicely
     system 'stty -raw echo'
-	 	system 'tput cnorm'
+    system 'tput cnorm'
     system 'clear'
-		Process.exit! true
+    Process.exit! true
   end
 
-	def read_char
-		system 'tput civis'
+  def read_char
+    system 'tput civis'
     system 'stty raw -echo'
     if $stdin.ready?
       c = $stdin.getc.chr
@@ -218,56 +216,56 @@ class Starx
         extra_thread = Thread.new do
           c += $stdin.getc.chr
           c += $stdin.getc.chr
-        end
-        extra_thread.join 0.00001
-        extra_thread.kill
+         end
+         extra_thread.join 0.00001
+         extra_thread.kill
       end
     end
     c
   end
 
-	def read_char_menu
-	  system 'stty raw -echo'
-		c = $stdin.getc.chr
-		c
-	end
+  def read_char_menu
+    system 'stty raw -echo'
+    c = $stdin.getc.chr
+    c
+  end
 
-	def keys_menu
-		c = read_char_menu
-		case c
-		when 'a'
-			Starx.new.play
-		when 'q'
-      quit_nicely
+  def keys_menu
+    c = read_char_menu
+    case c
+    when 'a'
+    Starx.new.play
+    when 'q'
+    quit_nicely
     when "\u0003"
-      quit_nicely
-		else
-			try_again_screen
-		end
-	end
-
-	def try_again_screen
-    system 'stty -raw'
-		(HEIGHT / 2).times{ WIDTH.times { print '*' } }
-    (WIDTH / 2 - 10).times { print ' ' }
-		puts "\e[31m You died. Haha!\e[0m"
-    (WIDTH / 2 - 10).times { print ' ' }
-		puts "\e[32m Your score: #{@score}\e[0m"
-    (WIDTH / 2 - 10).times { print ' ' }
-		puts "To try again hit 'a'"
-    (WIDTH / 2 - 10).times { print ' ' }
-		puts "To quit hit 'q'"
-		(HEIGHT / 2).times{ WIDTH.times { print '*' } }
-		keys_menu	
-	end
-
-	def play
-		loop do
-      tick
-			sleep 0.04
-		  system 'clear'
+    quit_nicely
+    else
+      try_again_screen
     end
-	end
+  end
+
+  def try_again_screen
+    system 'stty -raw'
+    (HEIGHT / 2).times{ WIDTH.times { print '*' } }
+    (WIDTH / 2 - 10).times { print ' ' }
+    puts "\e[31m You died. Haha!\e[0m"
+    (WIDTH / 2 - 10).times { print ' ' }
+    puts "\e[32m Your score: #{@score}\e[0m"
+    (WIDTH / 2 - 10).times { print ' ' }
+    puts "To try again hit 'a'"
+    (WIDTH / 2 - 10).times { print ' ' }
+    puts "To quit hit 'q'"
+    (HEIGHT / 2).times{ WIDTH.times { print '*' } }
+    keys_menu	
+  end
+
+  def play
+    loop do
+      tick
+      sleep 0.04
+      system 'clear'
+    end
+  end
 end
 
 g = Starx.new
