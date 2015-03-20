@@ -5,24 +5,24 @@ WIDTH = `tput cols`.to_i
 HEIGHT = `tput lines`.to_i - 3
 
 class Starx
-	def initialize
-	@cells = {}
-	(1..HEIGHT).each do |y|
-	    (1..WIDTH).each do |x|
-	      y = add_zero_if_needed(y)
-	      x = add_zero_if_needed(x)
-	      key = "#{y}.#{x}"
-	      if key == "#{ HEIGHT / 2 }.05"
-	        @cells[key] = :player
-	      else
-	        @cells[key] = :empty
-	      end
-	    end
-	  end
-	  @tickcount = 0
-	  @score = 0
-	  display
-	end
+  def initialize
+  @cells = {}
+  (1..HEIGHT).each do |y|
+      (1..WIDTH).each do |x|
+        y = add_zero_if_needed(y)
+        x = add_zero_if_needed(x)
+        key = "#{y}.#{x}"
+        if key == "#{ HEIGHT / 2 }.05"
+          @cells[key] = :player
+        else
+          @cells[key] = :empty
+        end
+      end
+    end
+    @tickcount = 0
+    @score = 0
+    display
+  end
 
   def add_zero_if_needed(value)
     value = value.to_i
@@ -60,7 +60,7 @@ class Starx
   end
 
   def sort_cells
-    @cells = @cells.sort_by { |key,_| key.to_f }	
+    @cells = @cells.sort_by { |key,_| key.to_f }  
   end
 
   def tick
@@ -93,7 +93,7 @@ class Starx
     @cells = new_cells
     switch_player_with(0,1)
     new_column
-	end
+  end
 
   def new_column
     if  @tickcount % 20 == 0 || @tickcount == 1
@@ -180,8 +180,8 @@ class Starx
       collision = true
     end
     collision
-	end
-	
+  end
+  
   def keys
     c = read_char
     case c
@@ -256,7 +256,7 @@ class Starx
     (WIDTH / 2 - 10).times { print ' ' }
     puts "To quit hit 'q'"
     (HEIGHT / 2).times{ WIDTH.times { print '*' } }
-    keys_menu	
+    keys_menu 
   end
 
   def play
