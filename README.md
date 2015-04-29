@@ -1,17 +1,20 @@
 starx
-===
-
-Overview
---------
+=====
 
 Starx is a simple, terminal-based game written in ruby.
 
-Instructions
-------------
+
+Demo
+----
+![Demo](demo.gif)
+
+
+Instalation
+-----------
 
 ```sh
 # install
- gem install starx
+gem install starx
 
 # run
 starx
