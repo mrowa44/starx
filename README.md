@@ -9,7 +9,7 @@ Demo
 ![Demo](demo.gif)
 
 
-Instalation
+Installation
 -----------
 
 ```sh
