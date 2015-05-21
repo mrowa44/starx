@@ -19,7 +19,7 @@ gem install starx
 # run
 starx
 ```
-Use arrows to move and 'q' to quit.
+You can use arrows or vim movement keys (hjkl) to move and 'q' to quit.
 
 License
 -------

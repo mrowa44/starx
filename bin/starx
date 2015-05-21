@@ -187,13 +187,13 @@ class Starx
     case c
     when 'q'
     quit_nicely
-    when "\e[A"
+    when "\e[A", 'k'
     move_up!
-    when "\e[B"
+    when "\e[B", 'j'
     move_down!
-    when "\e[C"
+    when "\e[C", 'l'
     move_forward!
-    when "\e[D"
+    when "\e[D", 'h'
     move_backward!
     when "\u0003"
     quit_nicely
